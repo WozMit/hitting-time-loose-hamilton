@@ -1,200 +1,233 @@
-# PalomarTemplate
+# The hitting time for loose Hamilton cycles in r-graphs
 
-[![CI](https://github.com/PalomarRegistry/PalomarTemplate/actions/workflows/ci.yml/badge.svg)](https://github.com/PalomarRegistry/PalomarTemplate/actions/workflows/ci.yml)
+[![CI](https://github.com/WozMit/temp-repo-3/actions/workflows/ci.yml/badge.svg)](https://github.com/WozMit/temp-repo-3/actions/workflows/ci.yml)
 
-A best-practice starting point for a
-[Palomar](https://palomar-registry.org/) submission. Use this as a
-GitHub template, replace the toy theorem and all `TEMPLATE` metadata, and keep
-the separation between the human-auditable statement and the proof.
+A Lean formalisation of the following hitting time theorem of Wanfang
+Chen, Jared León and Xizhi Liu.
 
-## Repository map
+For every fixed integer `r ≥ 3`, assume all `r`-element subsets of `n`
+vertices are exposed in a uniformly random order. As `n` tends to
+infinity through multiples of `r − 1`, with probability tending to
+`1`, a loose Hamilton cycle first emerges **exactly when the last
+isolated vertex disappears**.
 
-- `Challenge.lean` is the small statement surface a reader audits.
-- `Solution.lean` connects the same declaration to the completed proof.
-- `PalomarTemplate/` contains the full proof development.
-- `comparator.json` tells `lake comparator` which declarations must match.
-- `formalization.yaml` records the public result description, provenance,
-  authorship, automation, fidelity, and review information.
-- `LICENSE` contains the Apache License 2.0 terms declared by
-  `project.license`.
-- `docbuild/` is the recommended nested doc-gen4 project.
-- `scripts/verify-comparator.sh` runs the `lake comparator` that ships in
-  this project's own toolchain over the checked-in `comparator.json`,
-  registering the toolchain's bundled independent kernels (NanoDa and con-ron)
-  exactly as Palomar does; the optional `enable_nanoda` field is ignored, and
-  `external_kernels` is not a submitter field.
+```lean
+/-- Proportion of complete edge orders for which the two hitting times are equal. -/
+def hittingTimeProbability (n r : ℕ) : ℝ := by
+  classical
+  exact ((Finset.univ.filter (fun σ : LooseHamilton.EdgeOrder (Fin n) r =>
+    LooseHamilton.tauLooseHamilton σ = LooseHamilton.tauOne σ)).card : ℝ) /
+      Fintype.card (LooseHamilton.EdgeOrder (Fin n) r)
 
-The root uses `lakefile.toml`, a supported Lean toolchain (Palomar requires
-`leanprover/lean4:v4.35.0-rc2` or later, which is where `lake comparator`
-appears), and committed Lake manifests. Everything that judges a submission
-comes from `lean-toolchain`; there is no separate verifier pin to keep in step
-with it. GitHub Actions builds the Lean project with `lean-action`, generates
-API documentation with doc-gen4, and independently checks the advertised
-statement with `lake comparator`. Actions are pinned to immutable commits.
+/-- For every fixed r >= 3, with probability tending to 1, a loose Hamilton cycle
+appears exactly when the last isolated vertex disappears. Writing n=(r-1)q
+parametrises all vertex counts satisfying the necessary divisibility condition. -/
+theorem main_result (r : ℕ) (hr : 3 ≤ r) :
+    Filter.Tendsto (fun q : ℕ => hittingTimeProbability ((r - 1) * q) r)
+      Filter.atTop (nhds 1)
+```
 
-## Start a real project
+The file [`Challenge.lean`](Challenge.lean) is the statement of
+record. It exclusively imports Mathlib and defines the random process,
+loose cycles, hitting times and relevant probabilities. Readers solely
+interested in the theorem statement need consult no additional
+documents. [`Solution.lean`](Solution.lean) contains the identical
+formal declaration and connects it with the complete proof
+architecture. The **941 supporting source modules** are located in the
+`HittingTimeLooseHamilton/` directory.
 
-1. Click **Use this template** on GitHub and clone the new repository.
-2. Rename `PalomarTemplate` in the Lake package, module directory, namespace,
-   Comparator declaration, and metadata.
-3. Replace the example library, `Challenge.lean`, and `Solution.lean`.
-   Keep `Challenge.lean` as the small statement-only surface, with one `sorry`
-   for each advertised declaration; put the proofs in `Solution.lean`, where
-   Comparator checks them against those statements. The proof-status counts in
-   `formalization.yaml` exclude the deliberate Challenge `sorry`s.
-4. Replace every `TEMPLATE` value in `formalization.yaml`. Values that might
-   otherwise look like plausible defaults—including repository role,
-   classifications, proof counts, automation method, and review status—are
-   deliberately invalid until you choose them. Replace a placeholder list with
-   an empty list only where its adjacent comment permits that; lists described
-   as required must remain nonempty.
-   Write `project.description` as the concise public registry abstract for the
-   formalization as a whole. It should let a mathematical reader identify the
-   subject and principal result families; it is not an inventory of Comparator
-   declarations, and the README and Challenge documentation can carry the
-   fuller account. `status.main_results` is optional: add it only when a short
-   curated project-level list is useful, not to mirror Comparator declarations.
-   The `sources` list must remain nonempty. Every source relationship must be
-   exactly `formalizes`, `adapts`, `independently-proves`, `background`, or
-   `other`. Choose one result origin: for a result first presented by the
-   formalization, include a descriptive source with `type: original-proof` and
-   `relationship: other`; every additional source must use `background` or
-   `other`. Otherwise, omit `type: original-proof`, and give at least one cited
-   mathematical source a `formalizes`, `adapts`, or `independently-proves`
-   relationship. A new proof of a known published result is source-based and
-   uses `independently-proves`, not `original-proof`.
+The code was predominantly generated by OpenAI's ChatGPT under the
+author's guidance and review. This involved choosing the Lean
+formalisations, working through and repairing proofs, and devising the
+certificate machinery. The author established the targets, supplied
+the underlying informal proofs and phased roadmaps, made the
+mathematical decisions, and reviewed the output throughout. The
+current version of the formal proof is to be submitted to the [Palomar
+registry of Lean-verified mathematics
+](https://submit.palomar-registry.org/). This work benefited from the
+[ChatGPT for Academic
+Researchers](https://openai.com/index/chatgpt-for-academic-researchers/)
+programme, in which the author participates free of charge.
 
-   Every source needs a title and relationship. Its `type`, authors,
-   contributors, identifier, location, licence, and endorsement may be removed
-   when genuinely inapplicable. Use authors only for bibliographic authorship;
-   use contributors with a name and free-form role for credits such as editors
-   and problem proposers. A retained type is a concise free-text description
-   such as `article`, `paper`, `book`, `formalization`, `web post`,
-   `folklore`, or `conversation`. The exact value `original-proof` is
-   reserved for the result-origin declaration above. Set
-   `repository.role` to `substantive-development` and omit
-   `substantive_formalization`, or set it to `thin-wrapper` and provide the
-   underlying `owner/repository` or `https://github.com/owner/repository` URL
-   plus its full 40-character lowercase commit SHA. Remove
-   `related_formalizations` or set it to `[]` when none are known.
-   Keep the repository's Apache-2.0 `LICENSE` file and the matching
-   `project.license: "Apache-2.0"` metadata. This starter template supports
-   only that root licence. If the project deliberately uses another root
-   licence permitted by Palomar policy, use another starting point or own and
-   maintain the project's licence-validation CI contract. Cited sources and
-   dependencies retain their own licences.
-5. Update and commit dependency pins:
+## Proof roadmap
 
-   Before fetching and building the dependency closure, budget several GiB of
-   free space. After the root cache fetch and build, a clean local checkout of
-   the template's pinned manifest occupied about 7.7 GiB across about 123,000
-   files under `.lake/` when last measured, on Lean v4.32.0. The documentation
-   build adds doc-gen4 and its dependency closure under the shared
-   `.lake/packages/` plus generated output under `docbuild/.lake/`. The
-   precise footprint changes with the filesystem, cache contents, and any
-   dependency updates. Both `.lake/` directories are generated and must not be
-   committed.
+Fix `r ≥ 3`, and let the number of vertices tend to infinity through
+multiples of `r - 1`. A loose Hamilton cycle cannot appear while an
+isolated vertex remains. The objective is thus to show that, with
+probability tending to one, such a cycle exists as soon as the last
+isolated vertex disappears.
 
-   ```text
-   lake update
-   (cd docbuild && MATHLIB_NO_CACHE_ON_UPDATE=1 lake update)
-   ```
+The proof proceeds by counting cycles and controlling their survival
+under random edge deletions. It does not use the well-known Pósa
+rotation–extension technique.
 
-6. Run the project checks before submitting:
+### 1. Isolate the low-degree vertices
 
-   ```text
-   lake exe cache get
-   lake build
-   (cd docbuild && lake build PalomarTemplate:docs)
-   ruby scripts/validate-formalization.rb
-   ./scripts/verify-comparator.sh
-   ```
+Near the stopping time, vertices of unusually small degree form a
+small, well-separated exceptional set. Once every vertex has positive
+degree, choose an incident edge for each exceptional
+vertex. Separation ensures that these chosen edges are disjoint,
+allowing us to handle the exceptional vertices individually.
 
-   The metadata command parses the YAML, requires the Apache-2.0 root-licence
-   declaration, and reports the path of every retained template sentinel. CI
-   also detects the checked-in `LICENSE` file independently and runs an
-   explicit `--expect-template` check only in the canonical
-   `PalomarRegistry/PalomarTemplate` repository, proving that the shipped toy
-   metadata still has exactly the intended sentinel surface. Pull requests
-   from contribution forks run in that upstream repository context. Every
-   other repository—including standalone forks and repositories made with
-   **Use this template**—runs the ordinary command and requires every sentinel
-   to be replaced. CI also runs the corresponding build, documentation, cache,
-   and `lake comparator` checks. Run the final command from the repository
-   root. The full check set requires Linux, Git, Ruby, Python 3, and
-   `bwrap` (bubblewrap), which `lake comparator` uses to sandbox the build it
-   judges.
+The separation estimates and the construction of these edges are
+developed in
+[`ExceptionalSet.lean`](HittingTimeLooseHamilton/ExceptionalSet.lean)
+and
+[`CoreSeparatedBlocks.lean`](HittingTimeLooseHamilton/CoreSeparatedBlocks.lean). [`CoreHighProbability.lean`](HittingTimeLooseHamilton/CoreHighProbability.lean)
+establishes the required core properties with probability tending to
+one.
 
-   The pinned `lean-action` likewise runs `lake exe cache get` in CI and caches
-   `.lake/`. A successful canonical starter run deliberately includes the
-   statement-surface `sorry` warning and demonstrates the wiring, not submission
-   completeness.
+### 2. Reduce to a core with a prescribed matching
 
-7. Read the current
-   [Palomar submission policy](https://github.com/PalomarRegistry/PalomarPolicy/blob/main/CONTRIBUTING.md),
-   commit the final snapshot, and
-   [open the submission form](https://submit.palomar-registry.org/)
-   with the full 40-character commit SHA.
+In each chosen edge, retain two vertices and temporarily remove the
+other `r - 2`, including the exceptional vertex. The retained pairs
+form a prescribed matching on the remaining vertex set, which we call
+the core. We seek a matching-respecting mixed Hamilton cycle: a
+spanning cycle made from ordinary hyperedges and all the edges of the
+prescribed matching. Replacing each matching edge by its original
+hyperedge will restore the removed vertices.
 
-   Submit only if you are a responsible author or maintainer of the substantive
-   formalization, or have approval from one. For a thin wrapper, answer about
-   the underlying formalization rather than the wrapper; the form records that
-   relationship and allows optional evidence.
+This reduction is formalised in
+[`CoreBlocks.lean`](HittingTimeLooseHamilton/CoreBlocks.lean), with
+the choice based on revealed information in
+[`HittingTimeSelection.lean`](HittingTimeLooseHamilton/HittingTimeSelection.lean).
 
-## Important boundaries
+### 3. Identify the conditional distribution of the core
 
-This repository is structurally valid but its toy theorem does **not** meet
-Palomar's editorial floor. A green build or Comparator check establishes only
-that Lean accepts the project and that the recorded solution proves the recorded
-statement using the permitted axioms. It does not establish mathematical
-significance, fidelity to a source, novelty, or peer review.
+Reveal the information needed to determine the stopping time and
+select the exceptional edges. Conditional on this information, the
+remaining core is uniform among hypergraphs with the required number
+of edges and suitable lower bounds on vertex degrees. The counting
+argument must respect these constraints: the remaining edges are not
+independent.
 
-Keep `Challenge.lean` ordinary and readable. Definitions needed by the statement
-must have precise mathematical meanings and docstrings. Its transitive imports
-must resolve to Lean core, Mathlib, Tau Ceti, or CSLib; a Tau Ceti or CSLib
-import enlarges the trust surface and is prominently flagged. Dependencies used
-only by the proof may be arbitrary pinned Git dependencies.
-The root licence covers this repository snapshot only; cited papers, reused
-formalizations, and dependencies retain their own licences.
+[`HittingTimeSelectionObservation.lean`](HittingTimeLooseHamilton/HittingTimeSelectionObservation.lean)
+describes the revealed information, and
+[`HittingTimeExposureUniform.lean`](HittingTimeLooseHamilton/HittingTimeExposureUniform.lean)
+proves the resulting conditional distribution.
 
-Questions are welcome in the
-[Palomar channel on the Lean Zulip](https://leanprover.zulipchat.com/#narrow/channel/621638-Palomar).
+### 4. Count backwards in batches
 
-## Module system and file sizes
+Begin with the complete hypergraph on the core, where
+matching-respecting mixed cycles can be counted explicitly. Then
+follow a random deletion process down to the desired core, keeping the
+prescribed matching fixed. Group deletions into batches and estimate
+the proportion of cycles that survive each batch. Taking logarithms
+turns successive multiplicative losses into quantities that can be
+added and controlled.
 
-Every regular `.lean` source file in the submitted repository must use Lean's
-module system and contain at most **10,000 physical lines**. This includes
-Challenge, Solution, unused source files, generated certificates, contained
-projects, and local path dependencies. Ordinary comments may precede the
-`module` header; module documentation belongs after it. Blank and comment lines
-count. LF and CRLF each delimit one line; an unterminated final line counts,
-and a final newline does not add an empty line.
+The initial enumeration is developed in
+[`Enumeration.lean`](HittingTimeLooseHamilton/Enumeration.lean). The
+conditional batch distributions and their reverse descriptions are
+handled in
+[`RestrictedHostBatchLaw.lean`](HittingTimeLooseHamilton/RestrictedHostBatchLaw.lean)
+and
+[`RestrictedReverseUniform.lean`](HittingTimeLooseHamilton/RestrictedReverseUniform.lean);
+the fluctuation estimates appear in
+[`HostBatchVarianceMain.lean`](HittingTimeLooseHamilton/HostBatchVarianceMain.lean).
 
-Lake configuration files named `lakefile.lean` are exempt from the module
-header requirement, but still have the 10,000-line cap. Files below `.git` or
-`.lake` are excluded; submitted `.lean` symbolic links are rejected so a link
-cannot hide an oversized source file. Separately declared
-substantive source repositories for thin wrappers receive the same checks.
-External pinned Git dependencies are outside this per-file limit; Lean still
-checks their compatibility with the module system. The existing Challenge
-limits of **1,000 lines and 100 KiB** also apply.
+### 5. Use Kahn’s entropy theorem to control local choices
 
-Porting requires more than adding `module`: make the declarations needed by
-other modules public, use `public import` where the public interface needs an
-import, and expose definitions whose bodies clients need. See
-[Lean's modules and visibility reference](https://lean-lang.org/doc/reference/latest/Source-Files-and-Modules/#modules-and-visibility).
-Rebuild and rerun Comparator after porting. Split oversized files into smaller
-modules or reduce generated certificates; do not hide them in excluded paths.
+A large number of cycles alone does not guarantee that many survive
+deletion, as too many might rely on the same edges. Entropy measures
+the amount of choice in a random object. The entropy of a uniform
+choice from a finite family is the logarithm of the family’s size. By
+encoding parts of mixed cycles as auxiliary perfect matchings, we use
+Kahn’s entropy inequality to relate the number of global possibilities
+to the distribution of local choices. Together with regularity
+estimates, this provides the balance needed for the deletion argument.
 
-The submission form and HTTPS intake check a bounded subset of the submitted
-repository at the exact commit and report incomplete scans explicitly. They do
-not scan separately declared substantive repositories; preparation checks those. The verifier scans the complete
-checkout before builds and confirms headers with Lean's parser before running
-submitted Lake code. Violations identify the file and require a corrected new
-commit. These rules apply to new ordinary submissions and revisions; metadata
-corrections retain their registered source and are not retroactively rejected.
+The input is Theorem 4.2 of [J. Kahn (2023), *Asymptotics for Shamir’s
+problem*, Advances in Mathematics **422**,
+109019](https://doi.org/10.1016/j.aim.2023.109019). This is the only
+theorem from that paper formalised here, together with the supporting
+lemmas needed for its proof. Its statement is in
+[`KahnStatement.lean`](HittingTimeLooseHamilton/KahnStatement.lean),
+and its proof culminates in `Kahn.theorem42` in
+[`KahnMain.lean`](HittingTimeLooseHamilton/KahnMain.lean). Its
+application to mixed cycles is developed in
+[`BiasedRoleMain.lean`](HittingTimeLooseHamilton/BiasedRoleMain.lean)
+and
+[`EntropyPathBalance.lean`](HittingTimeLooseHamilton/EntropyPathBalance.lean).
 
-Run `python3 scripts/check-lean-sources.py` before `lake build`. CI repeats this
-non-executing check before installing dependencies or building. The supplied
-modules use public imports and declarations; keep this structure as you add
-files. This local check complements the full Palomar reusable workflow.
+### 6. Control the entire deletion process
+
+The lower bound on the cycle count and the balance estimates reinforce
+one another. A first-failure argument makes this dependence rigorous:
+assuming the estimates have held so far, we show that their first
+breakdown is unlikely. Combining this with the batch fluctuation
+bounds controls the accumulated losses and proves that the final core
+still contains a matching-respecting mixed cycle.
+
+This argument culminates in
+[`FirstFailureBootstrap.lean`](HittingTimeLooseHamilton/FirstFailureBootstrap.lean). The
+resulting conditional counting theorem is
+[`CoreCount.lean`](HittingTimeLooseHamilton/CoreCount.lean), and its
+cycle-existence consequence is
+[`HittingTimeCoreExistence.lean`](HittingTimeLooseHamilton/HittingTimeCoreExistence.lean).
+
+### 7. Restore the exceptional vertices
+
+Expand every edge of the prescribed matching back into its original
+hyperedge. The resulting loose Hamilton cycle contains every vertex
+and is present at the minimum-degree-one stopping time. Average the
+conditional failure probabilities over the possible revealed
+information, and add the vanishing probability that the required
+preliminary properties fail. This proves that the two hitting times
+coincide with probability tending to one.
+
+Expansion is formalised in
+[`HittingTimeExpansion.lean`](HittingTimeLooseHamilton/HittingTimeExpansion.lean),
+and averaging in
+[`HittingTimeExposureAverage.lean`](HittingTimeLooseHamilton/HittingTimeExposureAverage.lean). The
+final argument is assembled in
+[`HittingTimeProof.lean`](HittingTimeLooseHamilton/HittingTimeProof.lean),
+with the advertised main theorem presented in
+[`Solution.lean`](Solution.lean).
+
+
+## Trust
+
+The mathematical statements and proofs contain no `sorry` or
+project-defined `axiom`, except for the deliberate theorem placeholder
+in [`Challenge.lean`](Challenge.lean). That file specifies the
+statement against which
+[Comparator](https://github.com/leanprover/comparator#comparator)
+checks [`Solution.lean`](Solution.lean). The verification script
+invokes Comparator and the configured independent kernels, permitting
+only `propext`, `Quot.sound`, and `Classical.choice` as axioms. The
+project’s proof sources use neither `native_decide` nor `unsafe`
+declarations.
+
+## Building
+
+This project requires **Lean 4.35.0-rc2**, as specified in
+`lean-toolchain`. Run the following command from the project root to
+check the active version:
+
+```bash
+lake env lean --version
+```
+
+If the toolchain is not installed, install it with:
+
+```bash
+elan toolchain install leanprover/lean4:v4.35.0-rc2
+```
+
+The Comparator script requires Linux and Bubblewrap (`bwrap`) with
+working user namespaces, in addition to the pinned Lean toolchain. The
+metadata check requires Ruby, and the source check requires Python 3.
+
+Run the build and verification commands from the project root in the
+following order:
+
+```bash
+lake update                                                # Resolve project dependencies and update lake-manifest.json.
+(cd docbuild && MATHLIB_NO_CACHE_ON_UPDATE=1 lake update)  # Update documentation dependencies; skip automatic Mathlib cache download.
+python3 scripts/check-lean-sources.py                      # Check Lean module headers, encoding, and the 10000-line limit.
+lake exe cache get                                         # Download precompiled Mathlib files to save compilation time.
+lake build                                                 # Compile the library, Challenge, and Solution (9877 jobs).
+(cd docbuild && lake build HittingTimeLooseHamilton:docs)  # Generate API documentation, including imports (optional; extremely slow - 29836 jobs).
+ruby scripts/validate-formalization.rb                     # Check formalization.yaml parses and contains no TEMPLATE placeholders.
+./scripts/verify-comparator.sh                             # Compare Solution against Challenge and verify proofs with Lean, NanoDa, and con-ron.

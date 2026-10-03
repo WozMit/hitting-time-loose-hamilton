@@ -10,6 +10,5 @@ git = "https://github.com/leanprover/doc-gen4.git"
 rev = "v4.35.0-rc2"
 
 [[require]]
-name = "PalomarTemplate"
+name = "HittingTimeLooseHamilton"
 path = "../"
-

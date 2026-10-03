@@ -21,6 +21,12 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+      - name: Free disk space for Lean
+        if: ${{ runner.environment == 'github-hosted' }}
+        run: |
+          df -h
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet
+          df -h
       - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b
         with:
           ruby-version: "3.3.12"
@@ -77,11 +83,17 @@ jobs:
   build:
     name: Build with Lean
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90         # Increased execution time from 60
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+      - name: Free disk space for Lean # Free disk space
+        if: ${{ runner.environment == 'github-hosted' }}
+        run: |
+          df -h
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet
+          df -h
       - name: Check Lean source requirements before builds
         run: python3 scripts/check-lean-sources.py
       - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
@@ -91,11 +103,17 @@ jobs:
   docs:
     name: Build API documentation
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 360        # Increased execution time from 60
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+      - name: Free disk space for Lean # Free disk space
+        if: ${{ runner.environment == 'github-hosted' }}
+        run: |
+          df -h
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet
+          df -h
       - name: Check Lean source requirements before builds
         run: python3 scripts/check-lean-sources.py
       - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
@@ -107,7 +125,7 @@ jobs:
           MATHLIB_NO_CACHE_ON_UPDATE: "1"
           DISABLE_EQUATIONS: "1"
           DOCGEN_SRC: github
-        run: lake build PalomarTemplate:docs
+        run: lake build HittingTimeLooseHamilton:docs
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         with:
           name: api-documentation
@@ -117,11 +135,17 @@ jobs:
   comparator:
     name: Check statement against solution
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 90         # Increased execution time from 60
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           persist-credentials: false
+      - name: Free disk space for Lean # Free disk space
+        if: ${{ runner.environment == 'github-hosted' }}
+        run: |
+          df -h
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet
+          df -h
       - name: Check Lean source requirements before builds
         run: python3 scripts/check-lean-sources.py
       - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9

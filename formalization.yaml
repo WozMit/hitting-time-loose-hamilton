@@ -1,125 +1,93 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
-# formalization.yaml v0.4. Replace every TEMPLATE value before submitting.
-# Replace a placeholder list with [] only when its adjacent comment permits it;
-# lists described as required must remain nonempty.
 version: "v0.4"
 
 project:
-  name: "TEMPLATE: name of the formalization"
+  name: "The hitting time for loose Hamilton cycles in r-graphs"
   description: >-
-    TEMPLATE: concise public account of the mathematical content and principal
-    results of the formalization
-  # Required nonempty list of name strings or mappings with a nonempty name.
+    A Lean formalisation of a hitting time theorem of Wanfang Chen,
+    Jared León and Xizhi Liu. For every fixed integer r ≥ 3, assume
+    all r-element subsets of n vertices are exposed in a uniformly
+    random order. As n tends to infinity through multiples of r − 1,
+    with probability tending to one, a loose Hamilton cycle first
+    emerges exactly when the last isolated vertex disappears.
   authors:
-    - "TEMPLATE: formalizer name"
-  # Required root licence. Keep this in sync with the Apache-2.0 LICENSE file.
+    - "Jared León"
   license: "Apache-2.0"
-  # Required nonempty list of name strings or mappings with a nonempty name.
-  # For a thin wrapper, name people responsible for this submitted wrapper;
-  # submission authorization separately covers the underlying formalization.
   responsible_maintainers:
-    - "TEMPLATE: person responsible for this formalization"
-
-# Omit repository for an ordinary project: Palomar treats this submitted
-# repository as the substantive proof development. If this repository is only
-# a thin Comparator wrapper, uncomment and pin the actual formalization in this
-# exact shape:
-# repository:
-#   substantive_formalization:
-#     id: "TEMPLATE: owner/repository or https://github.com/owner/repository"
-#     revision: "TEMPLATE: full 40-character lowercase commit SHA"
+    - "Jared León"
 
 classification:
-  # Use 1–2 official arXiv identifiers such as math.LO and 1–8 five-character
-  # MSC 2020 identifiers such as 03B35.
-  arxiv: ["TEMPLATE: official arXiv identifier such as math.LO"]
-  msc2020: ["TEMPLATE: five-character MSC 2020 identifier such as 03B35"]
+  arxiv: ["math.CO"]
+  msc2020: ["05C65", "05C80"]
 
 sources:
-  # Sources must be nonempty. Every source needs a title and relationship; the
-  # relationship must be exactly formalizes, adapts, independently-proves,
-  # background, or other.
-  # Choose one result origin:
-  # - For a theorem first presented by this formalization, set one source to
-  #   type: original-proof and relationship: other. All additional source
-  #   relationships must be background or other.
-  # - Otherwise, omit type: original-proof and give at least one source a
-  #   formalizes, adapts, or independently-proves relationship. A new proof of
-  #   a known published result is source-based and uses independently-proves.
-  # Type, authors, contributors, id, location, note, license, and
-  # author_endorsement are optional; remove them when genuinely inapplicable.
-  # Authors are bibliographic authors. Contributors record other source roles,
-  # with one name and free-form role such as editor or problem-proposer.
-  # Type is a concise free-text
-  # description such as article, paper, book, formalization, web post, folklore,
-  # conversation, or other. The exact value original-proof is reserved for the
-  # result-origin declaration described above.
-  # Original-result example:
-  # - title: "TEMPLATE: describe the result first presented here"
-  #   type: original-proof
-  #   relationship: other
-  - title: "TEMPLATE: title of the mathematical source"
-    authors:
-      - "TEMPLATE: source author"
+  - title: "The hitting time for loose Hamilton cycles in r-graphs"
+    type: "original-proof"
+    relationship: "other"
+  - title: "Internal proof"
     contributors:
-      - name: "TEMPLATE: source contributor"
-        role: "TEMPLATE: contributor role, for example editor or problem-proposer"
-    id: "TEMPLATE: stable identifier or versioned URL"
-    type: "TEMPLATE: concise source kind, for example article, book, or formalization"
-    location: "TEMPLATE: stable URL or bibliographic location, if available"
-    relationship: "TEMPLATE: formalizes, adapts, independently-proves, background, or other"
-    note: "TEMPLATE: explain relationship or author_endorsement: other; otherwise remove"
-    license: "TEMPLATE: source license or unknown"
-    author_endorsement: "TEMPLATE: participated, endorsed, no-response, not-contacted, declined, n/a, or other"
+      - name: "Wanfang Chen"
+        role: "proof author"
+      - name: "Jared León"
+        role: "proof author"
+      - name: "Xizhi Liu"
+        role: "proof author"
+    relationship: "background"
+  - title: "Asymptotics for Shamir's Problem"
+    authors: ["Jeff Kahn"]
+    type: "paper"
+    id: "https://doi.org/10.1016/j.aim.2023.109019"
+    relationship: "background"
+    note: >-
+      Theorem 4.2 supplies a required entropy estimate and is
+      formalised within this repository.
 
-related_formalizations:
-  # Remove this field or use [] when none are known.
-  - id: "TEMPLATE: stable URL or identifier for earlier formalization"
-    relationship: "TEMPLATE: builds-on, adapts, independent, supersedes, or other"
-    note: "TEMPLATE: explain the relationship"
+related_formalizations: []
 
 status:
   scope: >-
-    TEMPLATE: state exactly what is and is not formalized, including any weaker
-    theorem, changed hypotheses, or omitted material.
-  # Count the proof development, excluding Challenge.lean's deliberate sorry.
-  # Replace each count with an unquoted nonnegative integer, for example 0.
-  sorry_count: "TEMPLATE: unquoted nonnegative integer"
-  sorry_in_definitions: "TEMPLATE: unquoted nonnegative integer"
-  axioms: ["TEMPLATE: declaration names, or replace this list with []"]
-  # status.main_results is optional. Add it only when a short curated
-  # project-level list is useful; it need not mirror Comparator declarations.
+    Complete, with no unproved steps. Nothing is assumed from the
+    literature. The theorem is proved from Mathlib alone.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
 
 automation:
   methods:
-    - method: "TEMPLATE: manual, copilot, agent, autonomous, or other"
-      models: ["TEMPLATE: model names, or replace this list with []"]
-      framework: "TEMPLATE: framework name, or n/a"
-      tool_setup: "TEMPLATE: exact detail, such as AI-assisted, editors, tactics, agents, or other tools used"
-      cost:
-        wall_time: "TEMPLATE: approximate elapsed effort"
-        spend_usd: "TEMPLATE: amount, subscription-based, or not tracked"
-        hardware: "TEMPLATE: local machine, API-only, or other"
-      prompting_notes: "TEMPLATE: representative prompting notes, or n/a"
-  spend_usd: "TEMPLATE: total amount, subscription-based, or not tracked"
-  notes: "TEMPLATE: describe the overall human and automation workflow"
+    - method: "agent"
+      models: []
+      framework: "OpenAI ChatGPT"
+      tool_setup: >-
+        Responsible for writing substantially all of the repository’s
+        Lean source code under the author's guidance and review. This
+        involved choosing the Lean formalisations, working through and
+        repairing proofs, and devising the certificate machinery. The
+        author established the targets, supplied the underlying
+        informal proofs and phased roadmaps, made the overarching
+        mathematical decisions, and reviewed the output throughout.
 
 fidelity:
-  divergences: "TEMPLATE: all known divergences from the cited source, or none known"
+  divergences: >-
+    Only theorem 4.2 from Kahn's work [Kahn, J. (2023). Asymptotics
+    for Shamir's problem. Advances in Mathematics, 422, 109019] was
+    formalised in this repository.
 
 review:
-  status: "TEMPLATE: honest review status, for example self-assessed"
+  status: "self-assessed"
   reviewers:
-    - "TEMPLATE: reviewer name, or none"
-  notes: "TEMPLATE: describe statement audits and mathematical review performed"
+    - "Jared León"
+  notes: >-
+    The author oversaw and reviewed the development as it
+    progressed. No external or independent review has been conducted,
+    and the Lean source code has not been read by other
+    mathematicians. Correctness is instead established mechanically:
+    Lean checks every inference step, while
+    scripts/verify-comparator.sh validates trust assumptions.
 
 alignment:
-  namespace: "TEMPLATE: project namespace"
+  namespace: "HittingTimeLooseHamilton"
   statements:
-    - source: "TEMPLATE: source theorem or section"
-      lean: "TEMPLATE: fully qualified Lean declaration"
-      module: "TEMPLATE: Lean module containing the declaration"
-      status: "TEMPLATE: proved, partial, adapted, or other honest description"
-      note: "TEMPLATE: explain the correspondence and any qualifications"
-
-acknowledgements: "TEMPLATE: libraries, tools, and people to credit"
+    - source: "Chen, León, Liu, Internal proof"
+      lean: "HittingTimeLooseHamilton.main_result"
+      module: "Solution"
+      status: "proved"

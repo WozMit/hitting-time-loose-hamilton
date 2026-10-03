@@ -3,7 +3,7 @@
  "packages":
  [{"type": "path",
    "scope": "",
-   "name": "PalomarTemplate",
+   "name": "HittingTimeLooseHamilton",
    "manifestFile": "lake-manifest.json",
    "inherited": false,
    "dir": "../",

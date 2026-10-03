@@ -1,17 +1,35 @@
 module
 
-public import PalomarTemplate
+public import HittingTimeLooseHamilton
 
 public section
 
-/-!
-# Proved solution
+/-! # Solution of the advertised hitting-time statement -/
 
-This module may import the full proof development. Comparator checks that the
-declaration below has exactly the same statement as its counterpart in
-`Challenge.lean` and uses only the permitted axioms.
--/
+noncomputable section
+namespace HittingTimeLooseHamilton
 
-theorem PalomarTemplate.main_result (n : ℕ) : n + n = 2 * n := by
-  exact add_self_eq_two_mul n
+/-- Proportion of complete edge orders for which the two hitting times
+are equal. -/
+@[expose] def hittingTimeProbability (n r : ℕ) : ℝ := by
+  classical
+  exact ((Finset.univ.filter (fun σ : LooseHamilton.EdgeOrder (Fin n) r =>
+    LooseHamilton.tauLooseHamilton σ = LooseHamilton.tauOne σ)).card : ℝ) /
+      Fintype.card (LooseHamilton.EdgeOrder (Fin n) r)
 
+/-- For every fixed r >= 3, asymptotically almost surely loose Hamiltonicity
+appears exactly when the last isolated vertex disappears. Writing n=(r-1)q
+parametrizes all vertex counts satisfying the necessary divisibility condition. -/
+theorem main_result (r : ℕ) (hr : 3 ≤ r) :
+    Filter.Tendsto (fun q : ℕ => hittingTimeProbability ((r - 1) * q) r)
+      Filter.atTop (nhds 1) := by
+  classical
+  have probability_eq (n : ℕ) :
+      hittingTimeProbability n r = LooseHamilton.hittingTimeProbability (Fin n) r := by
+    symm
+    have h := FiniteEntropy.Law.uniform_event (fun σ : LooseHamilton.EdgeOrder (Fin n) r =>
+      LooseHamilton.tauLooseHamilton σ = LooseHamilton.tauOne σ)
+    exact h
+  simpa only [probability_eq] using LooseHamilton.theorem11 r hr
+
+end HittingTimeLooseHamilton
