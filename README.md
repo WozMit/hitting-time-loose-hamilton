@@ -1,6 +1,6 @@
 # The hitting time for loose Hamilton cycles in r-graphs
 
-[![CI](https://github.com/WozMit/temp-repo-3/actions/workflows/ci.yml/badge.svg)](https://github.com/WozMit/temp-repo-3/actions/workflows/ci.yml)
+[![CI](https://github.com/WozMit/hitting-time-loose-hamilton/actions/workflows/ci.yml/badge.svg)](https://github.com/WozMit/hitting-time-loose-hamilton/actions/workflows/ci.yml)
 
 A Lean formalisation of the following hitting time theorem of Wanfang
 Chen, Jared León and Xizhi Liu.
