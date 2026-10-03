@@ -96,7 +96,7 @@ jobs:
           df -h
       - name: Check Lean source requirements before builds
         run: python3 scripts/check-lean-sources.py
-      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+      - uses: leanprover/lean-action@f061402b660e0c34644504b324e830f2991d4865
         with:
           build: true
 
@@ -116,7 +116,7 @@ jobs:
           df -h
       - name: Check Lean source requirements before builds
         run: python3 scripts/check-lean-sources.py
-      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+      - uses: leanprover/lean-action@f061402b660e0c34644504b324e830f2991d4865
         with:
           build: false
       - name: Build doc-gen4 output
@@ -148,7 +148,7 @@ jobs:
           df -h
       - name: Check Lean source requirements before builds
         run: python3 scripts/check-lean-sources.py
-      - uses: leanprover/lean-action@38fbc41a8c28c4cbaec22d7f7de508ec2e7c0dd9
+      - uses: leanprover/lean-action@f061402b660e0c34644504b324e830f2991d4865
         with:
           build: false
       - name: Install bubblewrap for lake comparator's sandbox
