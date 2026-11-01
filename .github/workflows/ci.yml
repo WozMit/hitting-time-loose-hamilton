@@ -27,7 +27,7 @@ jobs:
           df -h
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet
           df -h
-      - uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b
+      - uses: ruby/setup-ruby@7f797815d8adceb1c412e7abefdd1ab4abc47a5f
         with:
           ruby-version: "3.3.12"
           bundler-cache: true
